@@ -1,20 +1,44 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react'
+import { ActivityIndicator, StyleSheet, View} from 'react-native'
+import CurrentWeather from './src/screens/CurrentWeather'
+import UpcomingWeather from './src/screens/UpcomingWeather'
+import City from './src/screens/City'
+import { NavigationContainer } from '@react-navigation/native'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import {Feather} from '@expo/vector-icons'
+import Tabs from './src/components/Tabs'
+import { useGetWeather } from './src/hooks/useGetWeather'
+import ErrorItem from './src/components/ErrorItem'
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+const Tab = createBottomTabNavigator()
+
+function App() {
+  
+  const [loading, error, weather] = useGetWeather()
+
+  if (weather && weather.list && !loading) {
+    return (
+      <NavigationContainer>
+        <Tabs weather={weather} />
+      </NavigationContainer>
+    )
+  }
+
+  
+    return (
+      <View style={styles.container}>
+        { error ? <ErrorItem /> : <ActivityIndicator size={'large'} color={'blue'} /> }
+      </View>
+    )
+  
+  
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+    justifyContent: 'center'
+  }
+})
+
+export default App
